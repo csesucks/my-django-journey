@@ -1,0 +1,45 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<article class="media content-section">
+  <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+  <div class="media-body">
+    <div class="article-metadata">
+      <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+      <small class="text-muted">{{ object.date_posted }}</small>
+
+      {% if object.author == user %}
+        <a class="btn btn-sm btn-outline-info me-2" href="{% url 'post-update' object.pk %}">Edit</a>
+        <!-- Trigger modal -->
+        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+          Delete
+        </button>
+      {% endif %}
+    </div>
+
+    <h2 class="article-title">{{ object.title }}</h2>
+    <p class="article-content">{{ object.content }}</p>
+  </div>
+</article>
+
+<!-- Modal HTML -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'post-delete' object.pk %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete the post "<strong>{{ object.title }}</strong>"?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}
